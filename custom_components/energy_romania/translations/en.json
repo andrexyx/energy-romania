@@ -1,0 +1,35 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Energy Romania",
+        "description": "Set up real-time monitoring of Romania's National Energy System (SEN). Data is publicly available from Transelectrica — no credentials required.",
+        "data": {
+          "update_interval": "Update interval (seconds)"
+        },
+        "data_description": {
+          "update_interval": "How often to fetch new data (30-3600 seconds, default 60)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to Transelectrica API. Please try again later."
+    },
+    "abort": {
+      "already_configured": "Transelectrica SEN is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Energy Romania Options",
+        "data": {
+          "update_interval": "Update interval (seconds)"
+        },
+        "data_description": {
+          "update_interval": "How often to fetch new data (30-3600 seconds)"
+        }
+      }
+    }
+  }
+}
