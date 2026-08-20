@@ -36,6 +36,5 @@ Proiectul nu este afiliat oficial cu Transelectrica SA.
 
 ## Licenta si contributii
 
-Codul de baza al clientului SEN provine din proiectul MIT
-`emanuelbesliu/homeassistant-transelectrica`. Extinderea transfrontaliera, cardul,
-maparea si identitatea vizuala sunt mentinute de `@andrexyx`.
+Energy Romania este un proiect independent, publicat sub licența MIT și
+menținut de `@andrexyx`.
