@@ -11,6 +11,7 @@ from homeassistant.components.sensor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import (
@@ -79,6 +80,22 @@ async def async_setup_entry(
             )
         )
 
+    # Keep predictable entity IDs for the bundled card, including upgrades
+    # from versions where Home Assistant prefixed the device name.
+    registry = er.async_get(hass)
+    for entity in entities:
+        if not isinstance(entity, TranselectricaBorderFlowSensor):
+            continue
+        unique_id = entity.unique_id
+        desired_entity_id = (
+            f"sensor.energy_romania_{entity._country_key}_{entity._flow_kind}"
+        )
+        current_entity_id = registry.async_get_entity_id("sensor", DOMAIN, unique_id)
+        if current_entity_id and current_entity_id != desired_entity_id:
+            registry.async_update_entity(
+                current_entity_id, new_entity_id=desired_entity_id
+            )
+
     async_add_entities(entities)
 
 
@@ -87,7 +104,7 @@ class TranselectricaBorderFlowSensor(
 ):
     """Import, export or net physical flow for one Romanian border."""
 
-    _attr_has_entity_name = True
+    _attr_has_entity_name = False
     _attr_native_unit_of_measurement = "MW"
     _attr_device_class = SensorDeviceClass.POWER
     _attr_state_class = SensorStateClass.MEASUREMENT
