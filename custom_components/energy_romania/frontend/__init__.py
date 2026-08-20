@@ -11,7 +11,7 @@ from homeassistant.helpers.event import async_call_later
 _LOGGER = logging.getLogger(__name__)
 URL_BASE = "/energy_romania_static"
 CARD_URL = f"{URL_BASE}/transelectrica-flow-card.js"
-CARD_VERSION = "1.0.0"
+CARD_VERSION = "1.0.1"
 
 
 class JSModuleRegistration:
