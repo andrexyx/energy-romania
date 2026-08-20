@@ -1,7 +1,19 @@
-# Energy Romania pentru Home Assistant
+<p align="center">
+  <img src="custom_components/energy_romania/brand/icon.png" width="180" alt="Energy Romania logo">
+</p>
 
-Integrare independenta pentru monitorizarea fluxurilor fizice de energie dintre
-Romania si Ungaria, Serbia, Bulgaria, Ucraina si Republica Moldova.
+<h1 align="center">Energy Romania pentru Home Assistant</h1>
+
+<p align="center">
+  Integrare independentă pentru monitorizarea fluxurilor fizice de energie dintre<br>
+  România și Ungaria, Serbia, Bulgaria, Ucraina și Republica Moldova.
+</p>
+
+<p align="center">
+  <a href="https://github.com/andrexyx/energy-romania/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/andrexyx/energy-romania?style=flat-square"></a>
+  <a href="https://github.com/andrexyx/energy-romania/blob/main/LICENSE"><img alt="License MIT" src="https://img.shields.io/github/license/andrexyx/energy-romania?style=flat-square"></a>
+  <img alt="Home Assistant" src="https://img.shields.io/badge/Home%20Assistant-Custom%20Integration-41BDF5?style=flat-square&logo=home-assistant&logoColor=white">
+</p>
 
 ## Ce ofera
 
