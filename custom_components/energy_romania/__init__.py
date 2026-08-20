@@ -4,6 +4,7 @@ import logging
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import CoreState, EVENT_HOMEASSISTANT_STARTED, HomeAssistant
+from homeassistant.helpers import config_validation as cv
 
 from .api import TranselectricaAPI
 from .const import DOMAIN, PLATFORMS
@@ -11,6 +12,8 @@ from .coordinator import TranselectricaDataUpdateCoordinator
 from .frontend import JSModuleRegistration
 
 _LOGGER = logging.getLogger(__name__)
+
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
