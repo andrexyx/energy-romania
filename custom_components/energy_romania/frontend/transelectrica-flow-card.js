@@ -57,19 +57,19 @@ class TranselectricaFlowCard extends HTMLElement {
   render() {
     if (!this._hass || !this.shadowRoot) return;
     const countries = {
-      hungary: { label: "Ungaria", flag: "hu", x: 118, y: 68, rx: 254, ry: 192 },
-      ukraine: { label: "Ucraina", flag: "ua", x: 565, y: 68, rx: 425, ry: 185 },
-      moldova: { label: "Moldova", flag: "md", x: 580, y: 244, rx: 469, ry: 236 },
-      bulgaria: { label: "Bulgaria", flag: "bg", x: 475, y: 402, rx: 393, ry: 319 },
-      serbia: { label: "Serbia", flag: "rs", x: 115, y: 377, rx: 263, ry: 300 },
+      hungary: { label: "Ungaria", flag: "hu", x: 105, y: 70, sx: 190, sy: 100, rx: 278, ry: 204 },
+      ukraine: { label: "Ucraina", flag: "ua", x: 350, y: 70, sx: 350, sy: 128, rx: 405, ry: 190 },
+      moldova: { label: "Moldova", flag: "md", x: 595, y: 70, sx: 510, sy: 100, rx: 447, ry: 221 },
+      bulgaria: { label: "Bulgaria", flag: "bg", x: 595, y: 400, sx: 510, sy: 368, rx: 398, ry: 320 },
+      serbia: { label: "Serbia", flag: "rs", x: 105, y: 400, sx: 190, sy: 368, rx: 273, ry: 296 },
     };
     const totals = this.border("total");
     const flows = Object.entries(countries).map(([key, pos]) => ({ key, ...pos, ...this.border(key) }));
     const fmt = value => value === null ? "—" : `${Math.abs(value).toLocaleString("ro-RO", { maximumFractionDigits: 1 })} MW`;
     const paths = flows.map(flow => {
       const reverse = flow.direction === "export";
-      const x1 = reverse ? flow.rx : flow.x, y1 = reverse ? flow.ry : flow.y;
-      const x2 = reverse ? flow.x : flow.rx, y2 = reverse ? flow.y : flow.ry;
+      const x1 = reverse ? flow.rx : flow.sx, y1 = reverse ? flow.ry : flow.sy;
+      const x2 = reverse ? flow.sx : flow.rx, y2 = reverse ? flow.sy : flow.ry;
       const strength = Math.max(flow.imported || 0, flow.exported || 0);
       const width = Math.min(10, 2.5 + strength / 250);
       return `<path class="flow ${flow.direction}" d="M ${x1} ${y1} Q ${(x1+x2)/2} ${(y1+y2)/2-18} ${x2} ${y2}" style="--flow-width:${width}px" marker-end="url(#arrow-${flow.direction})"/>`;
@@ -83,7 +83,7 @@ class TranselectricaFlowCard extends HTMLElement {
         .totals{display:grid;grid-template-columns:repeat(3,minmax(110px,1fr));gap:8px;margin:13px 0 4px}.total{border:1px solid var(--divider-color);border-radius:12px;padding:9px 11px;background:color-mix(in srgb,var(--card-background-color) 88%,transparent)}.totals small,.totals b{display:block}.totals small{color:var(--secondary-text-color);font-size:11px;text-transform:uppercase;letter-spacing:.04em}.totals b{font-size:18px;margin-top:2px}.imp{color:var(--error-color,#ef5350)}.exp{color:var(--success-color,#43a047)}
         .legend{display:flex;justify-content:center;gap:18px;margin:10px 0 -2px;color:var(--secondary-text-color);font-size:11px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}.dot.imp{background:var(--error-color,#ef5350)}.dot.exp{background:var(--success-color,#43a047)}
         .map{position:relative;width:min(100%,760px);aspect-ratio:700/470;margin:4px auto 0}
-        svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}.romania{fill:var(--primary-color);fill-opacity:.18;stroke:var(--primary-color);stroke-width:3;filter:drop-shadow(0 5px 12px color-mix(in srgb,var(--primary-color) 25%,transparent))}
+        svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}.romania-map{opacity:.92;filter:drop-shadow(0 6px 12px rgba(0,0,0,.28))}
         .tower{fill:none;stroke:var(--primary-text-color);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;opacity:.88}
         .flow{fill:none;stroke-width:var(--flow-width);stroke-linecap:round;stroke-dasharray:10 9;animation:move 1.1s linear infinite}.flow.import{stroke:var(--error-color,#ef5350)}.flow.export{stroke:var(--success-color,#43a047)}.flow.idle{stroke:var(--disabled-text-color);animation:none}
         @keyframes move{to{stroke-dashoffset:-38}}
@@ -103,7 +103,7 @@ class TranselectricaFlowCard extends HTMLElement {
               <marker id="arrow-idle" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="var(--disabled-text-color)"/></marker>
               <linearGradient id="roFlag"><stop offset="0" stop-color="#002b7f"/><stop offset="33.3%" stop-color="#002b7f"/><stop offset="33.3%" stop-color="#fcd116"/><stop offset="66.6%" stop-color="#fcd116"/><stop offset="66.6%" stop-color="#ce1126"/></linearGradient>
             </defs>
-            <path class="romania" d="M255 213 L270 186 L301 169 L333 176 L360 158 L397 170 L429 174 L451 193 L477 207 L491 232 L478 252 L491 272 L477 287 L488 309 L460 326 L437 342 L401 344 L374 355 L343 344 L316 353 L291 335 L264 326 L250 306 L232 289 L239 266 L226 243 L242 226 Z"/>
+            <image class="romania-map" href="/energy_romania_static/romania-map.svg?v=1.1.2" x="250" y="174" width="200" height="143" preserveAspectRatio="xMidYMid meet"/>
             ${paths}
             <g class="ro-badge"><rect class="ro-flag-shape" x="330" y="224" width="40" height="27" rx="4"/><text class="ro-label" x="350" y="276">ROMÂNIA</text><text class="ro-sub" x="350" y="291">SISTEM ENERGETIC NAȚIONAL</text></g>
           </svg>

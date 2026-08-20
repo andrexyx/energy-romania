@@ -9,7 +9,7 @@ from homeassistant.core import HomeAssistant
 _LOGGER = logging.getLogger(__name__)
 URL_BASE = "/energy_romania_static"
 CARD_URL = f"{URL_BASE}/transelectrica-flow-card.js"
-CARD_VERSION = "1.1.1"
+CARD_VERSION = "1.1.2"
 
 
 class JSModuleRegistration:
