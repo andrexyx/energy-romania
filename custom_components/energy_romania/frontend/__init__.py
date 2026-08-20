@@ -2,11 +2,9 @@
 
 import logging
 from pathlib import Path
-from typing import Any
 
 from homeassistant.components.http import StaticPathConfig
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.event import async_call_later
 
 _LOGGER = logging.getLogger(__name__)
 URL_BASE = "/energy_romania_static"
@@ -19,7 +17,6 @@ class JSModuleRegistration:
 
     def __init__(self, hass: HomeAssistant) -> None:
         self.hass = hass
-        self.lovelace = hass.data.get("lovelace")
 
     async def async_register(self) -> None:
         """Register the static path and the storage-mode resource."""
@@ -30,32 +27,43 @@ class JSModuleRegistration:
         except RuntimeError:
             _LOGGER.debug("Transelectrica frontend path is already registered")
 
-        if self.lovelace is not None and self.lovelace.mode == "storage":
-            await self._async_wait_for_resources()
+        # Lovelace is a manifest dependency, so its data is available here.
+        # Newer Home Assistant versions expose ``resource_mode``; older ones
+        # used ``mode``. Supporting both keeps the custom integration usable
+        # across supported HA releases.
+        lovelace = self.hass.data.get("lovelace")
+        if lovelace is None:
+            raise RuntimeError("Lovelace data is not available")
 
-    async def _async_wait_for_resources(self) -> None:
-        async def _check_loaded(_now: Any) -> None:
-            if self.lovelace.resources.loaded:
-                await self._async_register_resource()
-            else:
-                async_call_later(self.hass, 5, _check_loaded)
+        resource_mode = getattr(
+            lovelace, "resource_mode", getattr(lovelace, "mode", None)
+        )
+        if resource_mode != "storage":
+            _LOGGER.warning(
+                "Energy Romania card cannot be registered automatically "
+                "because Lovelace resources are not in storage mode"
+            )
+            return
 
-        await _check_loaded(0)
+        self.resources = lovelace.resources
+        if not self.resources.loaded:
+            await self.resources.async_load()
+        await self._async_register_resource()
 
     async def _async_register_resource(self) -> None:
         versioned_url = f"{CARD_URL}?v={CARD_VERSION}"
         existing = [
             item
-            for item in self.lovelace.resources.async_items()
+            for item in self.resources.async_items()
             if item["url"].split("?")[0] == CARD_URL
         ]
         if not existing:
-            await self.lovelace.resources.async_create_item(
+            await self.resources.async_create_item(
                 {"res_type": "module", "url": versioned_url}
             )
             return
         if existing[0]["url"] != versioned_url:
-            await self.lovelace.resources.async_update_item(
+            await self.resources.async_update_item(
                 existing[0]["id"],
                 {"res_type": "module", "url": versioned_url},
             )
