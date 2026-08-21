@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/andrexyx/energy-romania/compare/v1.1.1...v1.1.2) (2026-08-20)
+
+
+### Bug Fixes
+
+* use real Romania map and fixed border layout ([b7c4637](https://github.com/andrexyx/energy-romania/commit/b7c4637dff0d59cb082fd643f25d84476810ccd8))
+
 ## [1.1.0](https://github.com/andrexyx/energy-romania/compare/v1.0.0...v1.1.0) (2026-08-20)
 
 
