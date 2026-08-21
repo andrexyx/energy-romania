@@ -57,12 +57,12 @@ class TranselectricaFlowCard extends HTMLElement {
   render() {
     if (!this._hass || !this.shadowRoot) return;
     const countries = {
-      hungary: { label: "Ungaria", flag: "hu", x: 105, y: 70, sx: 190, sy: 100, rx: 278, ry: 204 },
-      ukraine: { label: "Ucraina", flag: "ua", x: 350, y: 70, sx: 350, sy: 128, rx: 405, ry: 190 },
-      moldova: { label: "Moldova", flag: "md", x: 595, y: 70, sx: 510, sy: 100, rx: 447, ry: 221 },
-      bulgaria: { label: "Bulgaria", flag: "bg", x: 595, y: 400, sx: 510, sy: 368, rx: 398, ry: 320 },
-      serbia: { label: "Serbia", flag: "rs", x: 105, y: 400, sx: 190, sy: 368, rx: 273, ry: 296 },
-    };
+  hungary: {label: "Ungaria",flag: "hu",x: 105,y: 70,sx: 190,sy: 115,rx: 280,ry: 205},
+  ukraine: {label: "Ucraina",flag: "ua",x: 350,y: 70,sx: 350,sy: 130,rx: 350,ry: 174},
+  moldova: {label: "Moldova",flag: "md",x: 595,y: 70,sx: 510,sy: 115,rx: 420,ry: 205},
+  bulgaria: {label: "Bulgaria",flag: "bg",x: 595,y: 400,sx: 510,sy: 355,rx: 420,ry: 290},
+  serbia: {label: "Serbia",flag: "rs",x: 105,y: 400,sx: 190,sy: 355,rx: 280,ry: 290},
+};
     const totals = this.border("total");
     const flows = Object.entries(countries).map(([key, pos]) => ({ key, ...pos, ...this.border(key) }));
     const fmt = value => value === null ? "—" : `${Math.abs(value).toLocaleString("ro-RO", { maximumFractionDigits: 1 })} MW`;
@@ -72,7 +72,10 @@ class TranselectricaFlowCard extends HTMLElement {
       const x2 = reverse ? flow.sx : flow.rx, y2 = reverse ? flow.sy : flow.ry;
       const strength = Math.max(flow.imported || 0, flow.exported || 0);
       const width = Math.min(10, 2.5 + strength / 250);
-      return `<path class="flow ${flow.direction}" d="M ${x1} ${y1} Q ${(x1+x2)/2} ${(y1+y2)/2-18} ${x2} ${y2}" style="--flow-width:${width}px" marker-end="url(#arrow-${flow.direction})"/>`;
+      return `<path class="flow ${flow.direction}"
+    d="M ${x1} ${y1} L ${x2} ${y2}"
+    style="--flow-width:${width}px"
+    marker-end="url(#arrow-${flow.direction})"/>`;
     }).join("");
     const labels = flows.map(flow => `<button class="country ${flow.direction}" style="left:${flow.x / 7}%;top:${flow.y / 4.7}%" data-entity="${this.entity(flow.key, "net")}" title="Deschide detaliile pentru ${flow.label}"><span class="flag flag-${flow.flag}" aria-hidden="true"></span><span class="country-copy"><b>${flow.label}</b><span class="direction">${flow.direction === "import" ? "Import în România" : flow.direction === "export" ? "Export din România" : "Echilibru"}</span><strong>${fmt(flow.net)}</strong><small>Import ${fmt(flow.imported)} · Export ${fmt(flow.exported)}</small></span></button>`).join("");
 
@@ -82,12 +85,12 @@ class TranselectricaFlowCard extends HTMLElement {
         .title{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.title h2{font-size:21px;margin:0 0 3px}.title small{color:var(--secondary-text-color)}
         .totals{display:grid;grid-template-columns:repeat(3,minmax(110px,1fr));gap:8px;margin:13px 0 4px}.total{border:1px solid var(--divider-color);border-radius:12px;padding:9px 11px;background:color-mix(in srgb,var(--card-background-color) 88%,transparent)}.totals small,.totals b{display:block}.totals small{color:var(--secondary-text-color);font-size:11px;text-transform:uppercase;letter-spacing:.04em}.totals b{font-size:18px;margin-top:2px}.imp{color:var(--error-color,#ef5350)}.exp{color:var(--success-color,#43a047)}
         .legend{display:flex;justify-content:center;gap:18px;margin:10px 0 -2px;color:var(--secondary-text-color);font-size:11px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}.dot.imp{background:var(--error-color,#ef5350)}.dot.exp{background:var(--success-color,#43a047)}
-        .map{position:relative;width:min(100%,760px);aspect-ratio:700/470;margin:4px auto 0}
-        svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}.romania-map{opacity:.92;filter:drop-shadow(0 6px 12px rgba(0,0,0,.28))}
+        .map{position: relative;isolation: isolate;width: min(100%, 760px);aspect-ratio: 700 / 470;margin: 4px auto 0;}
+        svg{position: absolute;z-index: 10;inset: 0;width: 100%;height: 100%;overflow: visible;pointer-events: none;}
         .tower{fill:none;stroke:var(--primary-text-color);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;opacity:.88}
         .flow{fill:none;stroke-width:var(--flow-width);stroke-linecap:round;stroke-dasharray:10 9;animation:move 1.1s linear infinite}.flow.import{stroke:var(--error-color,#ef5350)}.flow.export{stroke:var(--success-color,#43a047)}.flow.idle{stroke:var(--disabled-text-color);animation:none}
         @keyframes move{to{stroke-dashoffset:-38}}
-        .country{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;border:1px solid var(--divider-color);border-radius:15px;background:color-mix(in srgb,var(--card-background-color) 96%,transparent);color:var(--primary-text-color);padding:8px 10px;width:clamp(116px,21%,156px);box-sizing:border-box;box-shadow:0 5px 18px rgba(0,0,0,.18);cursor:pointer;text-align:left;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}.country:hover,.country:focus-visible{transform:translate(-50%,-50%) scale(1.045);box-shadow:0 8px 24px rgba(0,0,0,.25);border-color:var(--primary-color);outline:none}.country.import{border-left:4px solid var(--error-color,#ef5350)}.country.export{border-left:4px solid var(--success-color,#43a047)}.flag{display:block;flex:0 0 30px;width:30px;height:21px;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.35)}.flag-hu{background:linear-gradient(#ce2939 0 33.3%,#fff 33.3% 66.6%,#477050 66.6%)}.flag-ua{background:linear-gradient(#005bbb 0 50%,#ffd500 50%)}.flag-md{background:linear-gradient(90deg,#0046ae 0 33.3%,#ffd200 33.3% 66.6%,#cc092f 66.6%)}.flag-bg{background:linear-gradient(#fff 0 33.3%,#00966e 33.3% 66.6%,#d62612 66.6%)}.flag-rs{background:linear-gradient(#c6363c 0 33.3%,#0c4076 33.3% 66.6%,#fff 66.6%)}.country-copy,.country-copy>*{display:block;min-width:0}.country b{font-size:14px}.country .direction{font-size:10px;color:var(--secondary-text-color)}.country strong{font-size:14px;margin-top:1px}.country small{font-size:9px;color:var(--secondary-text-color);white-space:nowrap;margin-top:2px}.ro-badge{filter:drop-shadow(0 3px 6px rgba(0,0,0,.24))}.ro-flag-shape{fill:url(#roFlag);stroke:var(--card-background-color);stroke-width:2}.ro-label{font-weight:800;font-size:17px;fill:var(--primary-text-color);text-anchor:middle;letter-spacing:.08em}.ro-sub{font-size:9px;fill:var(--secondary-text-color);text-anchor:middle;letter-spacing:.04em}.timestamp{text-align:right;color:var(--secondary-text-color);font-size:11px}
+        .country{z-index:5; position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;border:1px solid var(--divider-color);border-radius:15px;background:color-mix(in srgb,var(--card-background-color) 96%,transparent);color:var(--primary-text-color);padding:8px 10px;width:clamp(116px,21%,156px);box-sizing:border-box;box-shadow:0 5px 18px rgba(0,0,0,.18);cursor:pointer;text-align:left;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}.country:hover,.country:focus-visible{transform:translate(-50%,-50%) scale(1.045);box-shadow:0 8px 24px rgba(0,0,0,.25);border-color:var(--primary-color);outline:none}.country.import{border-left:4px solid var(--error-color,#ef5350)}.country.export{border-left:4px solid var(--success-color,#43a047)}.flag{display:block;flex:0 0 30px;width:30px;height:21px;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.35)}.flag-hu{background:linear-gradient(#ce2939 0 33.3%,#fff 33.3% 66.6%,#477050 66.6%)}.flag-ua{background:linear-gradient(#005bbb 0 50%,#ffd500 50%)}.flag-md{background:linear-gradient(90deg,#0046ae 0 33.3%,#ffd200 33.3% 66.6%,#cc092f 66.6%)}.flag-bg{background:linear-gradient(#fff 0 33.3%,#00966e 33.3% 66.6%,#d62612 66.6%)}.flag-rs{background:linear-gradient(#c6363c 0 33.3%,#0c4076 33.3% 66.6%,#fff 66.6%)}.country-copy,.country-copy>*{display:block;min-width:0}.country b{font-size:14px}.country .direction{font-size:10px;color:var(--secondary-text-color)}.country strong{font-size:14px;margin-top:1px}.country small{font-size:9px;color:var(--secondary-text-color);white-space:nowrap;margin-top:2px}.ro-badge{filter:drop-shadow(0 3px 6px rgba(0,0,0,.24))}.ro-flag-shape{fill:url(#roFlag);stroke:var(--card-background-color);stroke-width:2}.ro-label{font-weight:800;font-size:17px;fill:var(--primary-text-color);text-anchor:middle;letter-spacing:.08em}.ro-sub{font-size:9px;fill:var(--secondary-text-color);text-anchor:middle;letter-spacing:.04em}.timestamp{text-align:right;color:var(--secondary-text-color);font-size:11px}
         @media(max-width:600px){ha-card{padding:12px}.title h2{font-size:18px}.totals{grid-template-columns:repeat(3,1fr);gap:5px}.total{padding:7px}.totals b{font-size:14px}.totals small{font-size:8px}.legend{font-size:9px;gap:10px}.country{width:23%;padding:5px;gap:5px;border-radius:10px}.flag{flex-basis:21px;width:21px;height:15px}.country b{font-size:10px}.country .direction,.country small{font-size:7px}.country strong{font-size:10px}.ro-sub{display:none}}
         @media(prefers-reduced-motion:reduce){.flow{animation:none}}
       </style>
