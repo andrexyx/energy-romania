@@ -1101,20 +1101,36 @@ class TranselectricaFlowCard extends HTMLElement {
 }
 
 
-customElements.define(
-  "transelectrica-flow-card",
-  TranselectricaFlowCard
-);
-
-
 window.customCards =
   window.customCards || [];
 
 
-window.customCards.push({
-  type: "transelectrica-flow-card",
-  name: "Energy Romania Flow Map",
-  preview: true,
-  description:
-    "Hartă animată a fluxurilor transfrontaliere ale României",
-});
+if (
+  !window.customCards.some(
+    card =>
+      card.type ===
+      "transelectrica-flow-card"
+  )
+) {
+  window.customCards.push({
+    type: "transelectrica-flow-card",
+    name: "Energy Romania Flow Map",
+    preview: true,
+    description:
+      "Hartă animată a fluxurilor transfrontaliere ale României",
+    documentationURL:
+      "https://github.com/andrexyx/energy-romania",
+  });
+}
+
+
+if (
+  !customElements.get(
+    "transelectrica-flow-card"
+  )
+) {
+  customElements.define(
+    "transelectrica-flow-card",
+    TranselectricaFlowCard
+  );
+}
